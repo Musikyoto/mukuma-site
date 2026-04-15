@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jibun ni Kiku — Full Architecture</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,system-ui,sans-serif;background:#FAF8F5;color:#2C2C2A;padding:2rem 1.5rem;max-width:760px;margin:0 auto}
+@media(prefers-color-scheme:dark){body{background:#1C1C1E;color:#E5E5E3}}
+
+h1{font-size:20px;font-weight:500;margin:0 0 4px}
+.subtitle{font-size:13px;color:#888780;margin:0 0 20px}
+
+.legend{display:flex;gap:14px;margin:0 0 24px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#888780}
+
+.layer{margin-bottom:20px}
+.layer-label{font-size:11px;color:#888780;text-transform:uppercase;letter-spacing:0.8px;margin:0 0 8px 4px}
+
+.row{display:flex;gap:8px;flex-wrap:wrap}
+
+.box{border:1px solid rgba(44,44,42,0.1);border-radius:12px;padding:12px 14px;flex:1;min-width:150px;background:rgba(255,255,255,0.5)}
+@media(prefers-color-scheme:dark){.box{border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03)}}
+.box-title{font-size:13px;font-weight:600;margin:0 0 3px}
+.box-sub{font-size:11px;color:#5F5E5A;margin:0;line-height:1.6}
+@media(prefers-color-scheme:dark){.box-sub{color:#B4B2A9}}
+.box-url{font-size:11px;color:#185FA5;margin:2px 0 0;font-family:monospace;word-break:break-all}
+@media(prefers-color-scheme:dark){.box-url{color:#85B7EB}}
+.box-muted{color:#B4B2A9 !important}
+@media(prefers-color-scheme:dark){.box-muted{color:#5F5E5A !important}}
+
+.connector{display:flex;align-items:center;justify-content:center;height:28px;color:#B4B2A9;font-size:11px}
+.connector::before,.connector::after{content:"";flex:1;height:1px;background:rgba(44,44,42,0.08)}
+@media(prefers-color-scheme:dark){.connector::before,.connector::after{background:rgba(255,255,255,0.06)}}
+.connector span{padding:0 10px;white-space:nowrap}
+
+.pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:6px;margin-top:4px;font-weight:500}
+.p-live{background:#EAF3DE;color:#3B6D11}
+.p-config{background:#FAEEDA;color:#854F0B}
+.p-next{background:#E6F1FB;color:#185FA5}
+.p-future{background:#F1EFE8;color:#5F5E5A}
+@media(prefers-color-scheme:dark){
+.p-live{background:#27500A;color:#C0DD97}
+.p-config{background:#633806;color:#FAC775}
+.p-next{background:#0C447C;color:#B5D4F4}
+.p-future{background:#444441;color:#D3D1C7}
+}
+
+hr{border:none;border-top:1px solid rgba(44,44,42,0.08);margin:24px 0}
+@media(prefers-color-scheme:dark){hr{border-color:rgba(255,255,255,0.06)}}
+
+.app-cols{display:flex;gap:10px;flex-wrap:wrap}
+.app-col{flex:1;min-width:200px;display:flex;flex-direction:column;gap:6px}
+.app-col-title{font-size:12px;font-weight:600;color:#888780;margin:0 0 2px;padding-bottom:6px;border-bottom:1px solid rgba(44,44,42,0.08)}
+@media(prefers-color-scheme:dark){.app-col-title{border-color:rgba(255,255,255,0.06)}}
+.mini{border:1px solid rgba(44,44,42,0.08);border-radius:8px;padding:8px 10px}
+@media(prefers-color-scheme:dark){.mini{border-color:rgba(255,255,255,0.06)}}
+.mini-title{font-size:12px;font-weight:600;margin:0}
+.mini-sub{font-size:11px;color:#5F5E5A;margin:2px 0 0;line-height:1.5}
+@media(prefers-color-scheme:dark){.mini-sub{color:#B4B2A9}}
+
+.dashed{border-style:dashed !important}
+
+.dns-table{width:100%;font-size:11px;border-collapse:collapse;margin:8px 0 0}
+.dns-table td{padding:4px 6px;border-top:1px solid rgba(44,44,42,0.06)}
+@media(prefers-color-scheme:dark){.dns-table td{border-color:rgba(255,255,255,0.04)}}
+.dns-table td:first-child{font-family:monospace;font-weight:600;white-space:nowrap;width:100px}
+.dns-table td:nth-child(2){color:#5F5E5A}
+@media(prefers-color-scheme:dark){.dns-table td:nth-child(2){color:#B4B2A9}}
+.dns-table td:last-child{text-align:right;width:60px}
+
+.diagram-wrap{margin:0 0 32px;border:1px solid rgba(44,44,42,0.1);border-radius:12px;padding:20px 12px;background:rgba(255,255,255,0.5);overflow-x:auto}
+@media(prefers-color-scheme:dark){.diagram-wrap{border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.03)}}
+.diagram-title{font-size:11px;color:#888780;text-transform:uppercase;letter-spacing:0.8px;margin:0 0 12px 4px}
+</style>
+</head>
+<body>
+
+<h1>自分に聞く — complete architecture</h1>
+<p class="subtitle">All infrastructure, services, app internals, and distribution channels</p>
+
+<div class="legend">
+<div class="legend-item"><span class="pill p-live" style="margin:0">Live</span> deployed</div>
+<div class="legend-item"><span class="pill p-config" style="margin:0">Config</span> in progress</div>
+<div class="legend-item"><span class="pill p-next" style="margin:0">Next</span> phase 4</div>
+<div class="legend-item"><span class="pill p-future" style="margin:0">Future</span> phase 5+</div>
+</div>
+
+<!-- ==================== TECH ARCHITECTURE DIAGRAM ==================== -->
+<div class="diagram-wrap">
+<p class="diagram-title">Technical architecture diagram</p>
+<svg width="100%" viewBox="0 0 720 640" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>Technical architecture of Jibun ni Kiku</title>
+<desc>Shows the user's iPhone running the app with local-only data storage, connecting to Apple services for distribution and payment, and Vercel for the privacy policy page. No user data ever leaves the device.</desc>
+
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+
+<!-- ===== USER DEVICE BOUNDARY ===== -->
+<rect x="30" y="30" width="420" height="470" rx="20" fill="none" stroke="#888780" stroke-width="1" stroke-dasharray="6 4" opacity="0.4"/>
+<text x="50" y="55" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#888780">User's iPhone</text>
+
+<!-- App container -->
+<rect x="50" y="70" width="380" height="415" rx="14" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5" opacity="0.3"/>
+<text x="70" y="95" font-family="-apple-system,system-ui,sans-serif" font-size="13" font-weight="600" fill="#0C447C">React Native + Expo SDK 54</text>
+<text x="70" y="112" font-family="monospace" font-size="10" fill="#185FA5">com.musikyoto.jibunnikiku</text>
+
+<!-- Screens row -->
+<rect x="70" y="130" width="82" height="40" rx="6" fill="#B5D4F4" stroke="#85B7EB" stroke-width="0.5" opacity="0.5"/>
+<text x="111" y="154" font-family="-apple-system,system-ui,sans-serif" font-size="11" fill="#042C53" text-anchor="middle" dominant-baseline="central">Today</text>
+
+<rect x="162" y="130" width="82" height="40" rx="6" fill="#B5D4F4" stroke="#85B7EB" stroke-width="0.5" opacity="0.5"/>
+<text x="203" y="154" font-family="-apple-system,system-ui,sans-serif" font-size="11" fill="#042C53" text-anchor="middle" dominant-baseline="central">Past entries</text>
+
+<rect x="254" y="130" width="82" height="40" rx="6" fill="#B5D4F4" stroke="#85B7EB" stroke-width="0.5" opacity="0.5"/>
+<text x="295" y="154" font-family="-apple-system,system-ui,sans-serif" font-size="11" fill="#042C53" text-anchor="middle" dominant-baseline="central">Settings</text>
+
+<rect x="346" y="130" width="68" height="40" rx="6" fill="#B5D4F4" stroke="#85B7EB" stroke-width="0.5" opacity="0.5"/>
+<text x="380" y="154" font-family="-apple-system,system-ui,sans-serif" font-size="11" fill="#042C53" text-anchor="middle" dominant-baseline="central">Unlock</text>
+
+<!-- Onboarding -->
+<rect x="70" y="180" width="344" height="28" rx="6" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5" opacity="0.4"/>
+<text x="242" y="197" font-family="-apple-system,system-ui,sans-serif" font-size="10" fill="#0C447C" text-anchor="middle" dominant-baseline="central">Onboarding: Welcome → Notification picker → First question</text>
+
+<!-- SQLite box -->
+<rect x="70" y="225" width="160" height="72" rx="8" fill="#EAF3DE" stroke="#97C459" stroke-width="0.5"/>
+<text x="150" y="248" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#27500A" text-anchor="middle" dominant-baseline="central">expo-sqlite</text>
+<text x="150" y="266" font-family="monospace" font-size="10" fill="#3B6D11" text-anchor="middle" dominant-baseline="central">entries (date PK)</text>
+<text x="150" y="282" font-family="monospace" font-size="10" fill="#3B6D11" text-anchor="middle" dominant-baseline="central">user_prefs (key-val)</text>
+
+<!-- Questions box -->
+<rect x="250" y="225" width="160" height="72" rx="8" fill="#FAEEDA" stroke="#EF9F27" stroke-width="0.5"/>
+<text x="330" y="248" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#633806" text-anchor="middle" dominant-baseline="central">questions.json</text>
+<text x="330" y="266" font-family="-apple-system,system-ui,sans-serif" font-size="10" fill="#854F0B" text-anchor="middle" dominant-baseline="central">180 Qs (10 themes x 18)</text>
+<text x="330" y="282" font-family="-apple-system,system-ui,sans-serif" font-size="10" fill="#854F0B" text-anchor="middle" dominant-baseline="central">days_elapsed % total</text>
+
+<!-- Notifications box -->
+<rect x="70" y="315" width="160" height="56" rx="8" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="0.5"/>
+<text x="150" y="338" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#3C3489" text-anchor="middle" dominant-baseline="central">expo-notifications</text>
+<text x="150" y="356" font-family="-apple-system,system-ui,sans-serif" font-size="10" fill="#534AB7" text-anchor="middle" dominant-baseline="central">Daily push, 7 phrases</text>
+
+<!-- StoreKit box -->
+<rect x="250" y="315" width="160" height="56" rx="8" fill="#FAECE7" stroke="#F0997B" stroke-width="0.5"/>
+<text x="330" y="338" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#712B13" text-anchor="middle" dominant-baseline="central">StoreKit IAP</text>
+<text x="330" y="356" font-family="-apple-system,system-ui,sans-serif" font-size="10" fill="#993C1D" text-anchor="middle" dominant-baseline="central">¥980 one-time + 7d trial</text>
+
+<!-- Privacy boundary -->
+<rect x="70" y="390" width="340" height="36" rx="6" fill="none" stroke="#A32D2D" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="240" y="412" font-family="-apple-system,system-ui,sans-serif" font-size="11" font-weight="600" fill="#A32D2D" text-anchor="middle" dominant-baseline="central">No user data crosses this boundary. Ever.</text>
+
+<!-- Arrows: screens to data layer -->
+<line x1="150" y1="170" x2="150" y2="223" stroke="#85B7EB" stroke-width="0.5" marker-end="url(#arrow)" opacity="0.6"/>
+<line x1="330" y1="170" x2="330" y2="223" stroke="#85B7EB" stroke-width="0.5" marker-end="url(#arrow)" opacity="0.6"/>
+<text x="130" y="200" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#888780">read/write</text>
+<text x="338" y="200" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#888780">load Q</text>
+
+
+<!-- ===== APPLE SERVICES (RIGHT SIDE) ===== -->
+<rect x="490" y="30" width="200" height="250" rx="14" fill="none" stroke="#888780" stroke-width="0.5" stroke-dasharray="6 4" opacity="0.4"/>
+<text x="510" y="55" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#888780">Apple services</text>
+
+<rect x="510" y="70" width="160" height="50" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5"/>
+<text x="590" y="90" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#0C447C" text-anchor="middle" dominant-baseline="central">App Store</text>
+<text x="590" y="106" font-family="-apple-system,system-ui,sans-serif" font-size="10" fill="#185FA5" text-anchor="middle" dominant-baseline="central">Lifestyle category</text>
+
+<rect x="510" y="130" width="160" height="44" rx="8" fill="#E6F1FB" stroke="#85B7EB" stroke-width="0.5"/>
+<text x="590" y="156" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#0C447C" text-anchor="middle" dominant-baseline="central">TestFlight</text>
+
+<rect x="510" y="184" width="160" height="44" rx="8" fill="#FAECE7" stroke="#F0997B" stroke-width="0.5"/>
+<text x="590" y="210" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#712B13" text-anchor="middle" dominant-baseline="central">StoreKit server</text>
+
+<rect x="510" y="238" width="160" height="30" rx="6" fill="rgba(44,44,42,0.05)" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="590" y="257" font-family="-apple-system,system-ui,sans-serif" font-size="11" fill="#888780" text-anchor="middle" dominant-baseline="central">Developer ($99/yr)</text>
+
+<!-- Arrow: StoreKit device to server -->
+<line x1="410" y1="343" x2="508" y2="206" stroke="#D85A30" stroke-width="0.5" marker-end="url(#arrow)" opacity="0.7"/>
+<text x="440" y="268" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#993C1D" transform="rotate(-28 440 268)">purchase validation</text>
+
+<!-- Arrow: App to App Store -->
+<path d="M430 100 L508 95" fill="none" stroke="#85B7EB" stroke-width="0.5" marker-end="url(#arrow)" opacity="0.5"/>
+<text x="456" y="88" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#888780">distribute</text>
+
+
+<!-- ===== VERCEL / MUKUMA.COM ===== -->
+<rect x="490" y="310" width="200" height="120" rx="14" fill="none" stroke="#888780" stroke-width="0.5" stroke-dasharray="6 4" opacity="0.4"/>
+<text x="510" y="335" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#888780">Vercel (mukuma.com)</text>
+
+<rect x="510" y="348" width="160" height="32" rx="6" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="0.5"/>
+<text x="590" y="368" font-family="-apple-system,system-ui,sans-serif" font-size="11" fill="#085041" text-anchor="middle" dominant-baseline="central">Privacy policy page</text>
+
+<rect x="510" y="388" width="160" height="28" rx="6" fill="rgba(44,44,42,0.04)" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="590" y="406" font-family="-apple-system,system-ui,sans-serif" font-size="10" fill="#888780" text-anchor="middle" dominant-baseline="central">Brand root (placeholder)</text>
+
+<!-- Arrow: Settings to privacy policy -->
+<path d="M336 154 L460 154 L460 364 L508 364" fill="none" stroke="#1D9E75" stroke-width="0.5" marker-end="url(#arrow)" opacity="0.7"/>
+<text x="468" y="300" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#0F6E56" transform="rotate(90 468 300)">opens in browser</text>
+
+
+<!-- ===== INFRASTRUCTURE (BOTTOM) ===== -->
+<rect x="30" y="520" width="660" height="100" rx="14" fill="none" stroke="#888780" stroke-width="0.5" stroke-dasharray="6 4" opacity="0.3"/>
+<text x="50" y="545" font-family="-apple-system,system-ui,sans-serif" font-size="12" font-weight="600" fill="#888780">Infrastructure and services</text>
+
+<rect x="50" y="558" width="130" height="44" rx="8" fill="rgba(44,44,42,0.05)" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="115" y="575" font-family="-apple-system,system-ui,sans-serif" font-size="11" font-weight="600" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">Namecheap DNS</text>
+<text x="115" y="591" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#888780" text-anchor="middle" dominant-baseline="central">A + CNAME + MX + TXT</text>
+
+<rect x="200" y="558" width="130" height="44" rx="8" fill="rgba(44,44,42,0.05)" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="265" y="575" font-family="-apple-system,system-ui,sans-serif" font-size="11" font-weight="600" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">Zoho Mail</text>
+<text x="265" y="591" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#888780" text-anchor="middle" dominant-baseline="central">hello@mukuma.com</text>
+
+<rect x="350" y="558" width="150" height="44" rx="8" fill="rgba(44,44,42,0.05)" stroke="#B4B2A9" stroke-width="0.5"/>
+<text x="425" y="575" font-family="-apple-system,system-ui,sans-serif" font-size="11" font-weight="600" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">GitHub</text>
+<text x="425" y="591" font-family="monospace" font-size="9" fill="#888780" text-anchor="middle" dominant-baseline="central">Musikyoto/*</text>
+
+<rect x="520" y="558" width="150" height="44" rx="8" fill="rgba(44,44,42,0.05)" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="4 3"/>
+<text x="595" y="575" font-family="-apple-system,system-ui,sans-serif" font-size="11" font-weight="600" fill="#B4B2A9" text-anchor="middle" dominant-baseline="central">Google Play</text>
+<text x="595" y="591" font-family="-apple-system,system-ui,sans-serif" font-size="9" fill="#B4B2A9" text-anchor="middle" dominant-baseline="central">Android (future)</text>
+
+<!-- Dashed connectors to infra -->
+<line x1="115" y1="558" x2="115" y2="520" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.4"/>
+<line x1="425" y1="558" x2="425" y2="520" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.4"/>
+<line x1="590" y1="430" x2="590" y2="520" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.3"/>
+
+</svg>
+</div>
+
+<!-- ==================== LAYERED BREAKDOWN ==================== -->
+
+<div class="layer">
+<p class="layer-label">Brand umbrella</p>
+<div class="box" style="flex:none">
+<div class="box-title">Mukuma (無垢間)</div>
+<div class="box-sub">"Pure space" — umbrella brand for all ventures</div>
+<div class="box-url">mukuma.com</div>
+<span class="pill p-live">Live</span>
+</div>
+</div>
+
+<div class="connector"><span>owns domain</span></div>
+
+<div class="layer">
+<p class="layer-label">Domain and DNS (Namecheap)</p>
+<div class="box" style="flex:none">
+<div class="box-title">mukuma.com — DNS records</div>
+<table class="dns-table">
+<tr><td>A @</td><td>76.76.21.21 (Vercel)</td><td><span class="pill p-config" style="margin:0">Config</span></td></tr>
+<tr><td>CNAME www</td><td>cname.vercel-dns.com</td><td><span class="pill p-config" style="margin:0">Config</span></td></tr>
+<tr><td>MX</td><td>mx.zoho.com / mx2.zoho.com</td><td><span class="pill p-live" style="margin:0">Live</span></td></tr>
+<tr><td>TXT (SPF)</td><td>v=spf1 include:zoho.com ~all</td><td><span class="pill p-live" style="margin:0">Live</span></td></tr>
+<tr><td>TXT (DKIM)</td><td>Zoho DKIM verification key</td><td><span class="pill p-live" style="margin:0">Live</span></td></tr>
+</table>
+</div>
+</div>
+
+<div class="connector"><span>routes to</span></div>
+
+<div class="layer">
+<p class="layer-label">Hosted services</p>
+<div class="row">
+<div class="box">
+<div class="box-title">Vercel</div>
+<div class="box-sub">Static site hosting</div>
+<div class="box-url">mukuma.com/</div>
+<div class="box-sub">Brand root (placeholder)</div>
+<div class="box-url">mukuma.com/jibun-ni-kiku/privacy/</div>
+<div class="box-sub">Privacy policy (bilingual)</div>
+<div class="box-url box-muted">mukuma.com/blank-page/privacy/</div>
+<div class="box-sub box-muted">Future: Blank Page</div>
+<span class="pill p-live">Live</span>
+</div>
+<div class="box">
+<div class="box-title">Zoho Mail</div>
+<div class="box-sub">Business email (free tier)</div>
+<div class="box-url">adrianwang@mukuma.com</div>
+<div class="box-url">hello@mukuma.com</div>
+<div class="box-sub" style="margin-top:2px">Alias for public contact</div>
+<span class="pill p-live">Live</span>
+</div>
+<div class="box">
+<div class="box-title">GitHub</div>
+<div class="box-sub">Source code repos</div>
+<div class="box-url">Musikyoto/mukuma-site</div>
+<div class="box-url">Musikyoto/jibun-ni-kiku</div>
+<div class="box-url box-muted">Musikyoto/blank-page</div>
+<span class="pill p-live">Live</span>
+</div>
+</div>
+</div>
+
+<hr>
+
+<div class="layer">
+<p class="layer-label">App architecture — 自分に聞く</p>
+<div class="app-cols">
+<div class="app-col">
+<p class="app-col-title">On-device (iOS)</p>
+<div class="mini"><div class="mini-title">React Native + Expo SDK 54</div><div class="mini-sub">App runtime. Bundle ID: com.musikyoto.jibunnikiku</div><span class="pill p-next">Next</span></div>
+<div class="mini"><div class="mini-title">expo-sqlite</div><div class="mini-sub">Local DB: entries + user_prefs. Never leaves device.</div><span class="pill p-next">Next</span></div>
+<div class="mini"><div class="mini-title">expo-notifications</div><div class="mini-sub">Daily push at user time (default 21:00). 7 rotating phrases.</div><span class="pill p-next">Next</span></div>
+<div class="mini"><div class="mini-title">questions.json</div><div class="mini-sub">180 Qs bundled in-app. Rotation: days_elapsed % total.</div><span class="pill p-next">Next</span></div>
+</div>
+<div class="app-col">
+<p class="app-col-title">Payments and distribution</p>
+<div class="mini"><div class="mini-title">Apple StoreKit IAP</div><div class="mini-sub">Non-consumable ¥980. 7-day trial from install date.</div><span class="pill p-next">Next</span></div>
+<div class="mini"><div class="mini-title">TestFlight</div><div class="mini-sub">Beta: 3-5 testers, 7-day test. LINE feedback D1/3/7.</div><span class="pill p-next">Next</span></div>
+<div class="mini"><div class="mini-title">App Store (iOS)</div><div class="mini-sub">Lifestyle category. "Data not collected." ¥980.</div><span class="pill p-next">Next</span></div>
+<div class="mini"><div class="mini-title">Google Play (Android)</div><div class="mini-sub">react-native-iap. Same model. $25 registration.</div><span class="pill p-future">Future</span></div>
+</div>
+<div class="app-col">
+<p class="app-col-title">Content and design</p>
+<div class="mini"><div class="mini-title">Figma</div><div class="mini-sub">4 screens + 3 onboarding. Dark mode. Hiragino Mincho.</div><span class="pill p-live">Live</span></div>
+<div class="mini"><div class="mini-title">Question library</div><div class="mini-sub">180 Qs (10 themes x 18). Pending SIL tone review.</div><span class="pill p-config">Config</span></div>
+<div class="mini"><div class="mini-title">App Store listing</div><div class="mini-sub">Japanese copy, keywords, captions. Pending SIL review.</div><span class="pill p-config">Config</span></div>
+<div class="mini"><div class="mini-title">Beta feedback plan</div><div class="mini-sub">D1/3/7 via LINE. Gate: "would you miss it?"</div><span class="pill p-live">Live</span></div>
+</div>
+</div>
+</div>
+
+<hr>
+
+<div class="layer">
+<p class="layer-label">Data flow principle</p>
+<div class="box dashed" style="flex:none">
+<div class="box-title">Zero data architecture</div>
+<div class="box-sub" style="line-height:1.7">No backend. No server. No cloud. No account. No analytics. No crash reporting. No third-party services of any kind. All user data stays in on-device SQLite — permanently. Apple StoreKit handles payments; developer never sees payment data. The only external URL the app references is the privacy policy page at mukuma.com.</div>
+</div>
+</div>
+
+<hr>
+
+<div class="layer">
+<p class="layer-label">Development workflow</p>
+<div class="row">
+<div class="box"><div class="box-title">Claude.ai</div><div class="box-sub">Planning, decisions, content, dashboard</div></div>
+<div class="box"><div class="box-title">Claude Code</div><div class="box-sub">Code, repo management, Git push</div></div>
+<div class="box"><div class="box-title">Figma</div><div class="box-sub">UI/UX design, mockups</div></div>
+<div class="box"><div class="box-title">LINE</div><div class="box-sub">Beta feedback, SIL comms</div></div>
+</div>
+</div>
+
+<hr>
+
+<div class="layer">
+<p class="layer-label">Other Mukuma projects</p>
+<div class="row">
+<div class="box dashed">
+<div class="box-title">Blank Page (ブランクページ)</div>
+<div class="box-sub">Anonymous AI life coaching via LINE. Wizard of Oz phase. Future stack: LINE OA + Claude API + Vercel.</div>
+<span class="pill p-future">Future</span>
+</div>
+<div class="box dashed">
+<div class="box-title">Future ventures</div>
+<div class="box-sub">TBD — all under Mukuma. Each gets mukuma.com/{project}/privacy/</div>
+<span class="pill p-future">Future</span>
+</div>
+</div>
+</div>
+
+</body>
+</html>
