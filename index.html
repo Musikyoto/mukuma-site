@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mukuma（無垢間）</title>
-<meta name="description" content="無垢間 — pure space for honest thought.">
+<meta name="description" content="無垢間 — Mukuma">
 <meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -16,51 +17,118 @@
     align-items:center;
     justify-content:center;
     min-height:100vh;
-    text-align:center;
     padding:2rem;
   }
-  .wrap{max-width:400px}
-  h1{
-    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
-    font-size:1.8rem;
-    font-weight:400;
-    letter-spacing:0.12em;
-    margin-bottom:0.5rem;
+  .wrap{
+    text-align:center;
+    max-width:460px;
   }
-  .en{
+
+  .logo{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:3rem;
+  }
+  .logo-mark{width:56px;height:56px;flex-shrink:0}
+  .logo-text{text-align:left}
+  .logo-jp{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:1.7rem;
+    font-weight:400;
+    letter-spacing:0.1em;
+    line-height:1.2;
+  }
+  .logo-en{
+    font-size:0.7rem;
+    color:#B4B2A9;
+    letter-spacing:0.2em;
+    text-transform:uppercase;
+    margin-top:3px;
+  }
+
+  .divider{
+    width:32px;
+    height:1px;
+    background:rgba(44,44,42,0.1);
+    margin:0 auto 2rem;
+  }
+
+  .status{
     font-size:0.85rem;
     color:#888780;
     letter-spacing:0.06em;
-    margin-bottom:2rem;
+    margin-bottom:0.4rem;
   }
-  .tagline{
-    font-size:0.9rem;
-    color:#5F5E5A;
-    line-height:1.8;
-  }
-  .contact{
-    margin-top:2.5rem;
+  .status-en{
     font-size:0.75rem;
     color:#B4B2A9;
+    letter-spacing:0.04em;
   }
-  .contact a{color:#B4B2A9;text-decoration:none}
-  .contact a:hover{color:#5F5E5A}
+
+  .contact{
+    margin-top:3.5rem;
+    font-size:0.78rem;
+    color:#B4B2A9;
+    line-height:1.8;
+  }
+  .contact-label{
+    font-size:0.7rem;
+    color:#D3D1C7;
+    letter-spacing:0.04em;
+    margin-bottom:2px;
+  }
+  .contact a{
+    color:#888780;
+    text-decoration:none;
+    border-bottom:1px solid rgba(44,44,42,0.08);
+    padding-bottom:1px;
+  }
+  .contact a:hover{
+    color:#2C2C2A;
+    border-bottom-color:rgba(44,44,42,0.2);
+  }
+
   @media(prefers-color-scheme:dark){
     body{background:#1C1C1E;color:#E5E5E3}
-    .en{color:#888780}
-    .tagline{color:#B4B2A9}
+    .logo-mark svg rect{stroke:#E5E5E3}
+    .logo-mark svg line{stroke:#E5E5E3}
+    .logo-jp{color:#E5E5E3}
+    .logo-en{color:#5F5E5A}
+    .divider{background:rgba(255,255,255,0.06)}
+    .status{color:#888780}
+    .status-en{color:#5F5E5A}
     .contact{color:#5F5E5A}
-    .contact a{color:#5F5E5A}
-    .contact a:hover{color:#B4B2A9}
+    .contact-label{color:#444441}
+    .contact a{color:#888780;border-bottom-color:rgba(255,255,255,0.06)}
+    .contact a:hover{color:#E5E5E3;border-bottom-color:rgba(255,255,255,0.15)}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>無垢間</h1>
-  <p class="en">Mukuma</p>
-  <p class="tagline">A pure space for honest thought.</p>
-  <p class="contact"><a href="mailto:hello@mukuma.com">hello@mukuma.com</a></p>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="8" width="32" height="32" rx="5" stroke="#2C2C2A" stroke-width="1.5"/>
+        <line x1="24" y1="14" x2="24" y2="34" stroke="#2C2C2A" stroke-width="1.5" stroke-linecap="round" opacity="0.45"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-jp">無垢間</div>
+      <div class="logo-en">Mukuma</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="status">準備中</p>
+  <p class="status-en">Coming soon</p>
+
+  <div class="contact">
+    <p class="contact-label">ご質問・お問い合わせ</p>
+    <p><a href="mailto:hello@mukuma.com">hello@mukuma.com</a></p>
+  </div>
 </div>
 </body>
 </html>
