@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サポート — 自分に聞く</title>
+<meta name="description" content="自分に聞く（Jibun ni Kiku）のサポート / Support">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{font-size:16px;-webkit-text-size-adjust:100%}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",system-ui,-apple-system,sans-serif;
+    background:#FAF8F5;
+    color:#2C2C2A;
+    line-height:1.85;
+    padding:0 1.5rem 5rem;
+    max-width:640px;
+    margin:0 auto;
+    transition:background 0.3s,color 0.3s;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1.25rem 0;
+    margin-bottom:1.5rem;
+  }
+  .topbar-logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    color:inherit;
+  }
+  .topbar-logo:hover{opacity:0.7}
+  .topbar-mark{width:28px;height:28px;flex-shrink:0}
+  .topbar-mark svg path,.topbar-mark svg line{transition:stroke 0.3s}
+  .topbar-name{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:0.85rem;
+    font-weight:400;
+    letter-spacing:0.06em;
+    transition:color 0.3s;
+  }
+
+  .topbar-right{
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+
+  .lang-toggle{
+    display:flex;
+    align-items:center;
+    gap:0.125rem;
+  }
+  .lang-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0.3rem 0.5rem;
+    font-family:inherit;
+    font-size:0.75rem;
+    letter-spacing:0.06em;
+    color:#B4B2A9;
+    transition:color 0.2s;
+    border-radius:3px;
+  }
+  .lang-btn:hover{color:#5F5E5A}
+  .lang-btn.active{color:#2C2C2A}
+  .lang-sep{
+    color:#B4B2A9;
+    font-size:0.7rem;
+    user-select:none;
+    transition:color 0.3s;
+  }
+
+  .theme-toggle{
+    width:32px;
+    height:32px;
+    border:none;
+    background:none;
+    cursor:pointer;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    transition:background 0.2s;
+  }
+  .theme-toggle:hover{background:rgba(44,44,42,0.05)}
+  .theme-toggle svg{width:16px;height:16px;position:absolute;transition:opacity 0.4s ease,transform 0.4s ease}
+  .icon-sun{color:#888780;opacity:1;transform:rotate(0deg)}
+  .icon-moon{color:#888780;opacity:0;transform:rotate(-90deg)}
+
+  .brand{
+    text-align:center;
+    margin-bottom:3rem;
+    padding-bottom:2rem;
+    border-bottom:1px solid rgba(44,44,42,0.08);
+    transition:border-color 0.3s;
+  }
+  .brand h1{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:1.5rem;
+    font-weight:400;
+    letter-spacing:0.08em;
+    margin-bottom:0.25rem;
+    transition:color 0.3s;
+  }
+  .brand .sub{
+    font-size:0.8rem;
+    color:#888780;
+    letter-spacing:0.04em;
+    transition:color 0.3s;
+  }
+
+  h2{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:1.1rem;
+    font-weight:400;
+    margin:2.5rem 0 0.75rem;
+    letter-spacing:0.04em;
+    transition:color 0.3s;
+  }
+  h2:first-of-type{margin-top:0}
+
+  p{
+    font-size:0.9rem;
+    margin-bottom:1rem;
+    color:#444441;
+    transition:color 0.3s;
+  }
+
+  a{color:#5F5E5A;text-decoration:underline;text-underline-offset:2px;transition:color 0.3s}
+  a:hover{color:#2C2C2A}
+
+  .contact{
+    font-size:0.85rem;
+    color:#5F5E5A;
+    transition:color 0.3s;
+  }
+
+  .lang-content{display:none}
+  .lang-content.active{display:block}
+
+  .footer{
+    margin-top:3rem;
+    padding-top:2rem;
+    border-top:1px solid rgba(44,44,42,0.08);
+    text-align:center;
+    transition:border-color 0.3s;
+  }
+  .footer p{
+    font-size:0.75rem;
+    color:#B4B2A9;
+  }
+  .footer a{color:#B4B2A9;transition:color 0.3s}
+
+  /* Dark mode */
+  body.dark{background:#1C1C1E;color:#E5E5E3}
+  body.dark .topbar-mark svg path{stroke:#E5E5E3}
+  body.dark .topbar-mark svg line{stroke:#E5E5E3}
+  body.dark .topbar-name{color:#E5E5E3}
+  body.dark .topbar-logo:hover{opacity:0.7}
+  body.dark .lang-btn{color:#5F5E5A}
+  body.dark .lang-btn:hover{color:#888780}
+  body.dark .lang-btn.active{color:#E5E5E3}
+  body.dark .lang-sep{color:#5F5E5A}
+  body.dark .theme-toggle:hover{background:rgba(255,255,255,0.06)}
+  body.dark .icon-sun{opacity:0;transform:rotate(90deg)}
+  body.dark .icon-moon{opacity:1;transform:rotate(0deg)}
+  body.dark .brand{border-bottom-color:rgba(255,255,255,0.06)}
+  body.dark .brand h1{color:#E5E5E3}
+  body.dark .brand .sub{color:#888780}
+  body.dark h2{color:#D3D1C7}
+  body.dark p{color:#B4B2A9}
+  body.dark a{color:#B4B2A9}
+  body.dark a:hover{color:#E5E5E3}
+  body.dark .contact{color:#888780}
+  body.dark .footer{border-top-color:rgba(255,255,255,0.06)}
+  body.dark .footer p{color:#5F5E5A}
+  body.dark .footer a{color:#5F5E5A}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="https://mukuma.com" class="topbar-logo">
+    <div class="topbar-mark">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 8 L35 8 C37.76 8 40 10.24 40 13 L40 35 C40 37.76 37.76 40 35 40 L13 40 C10.24 40 8 37.76 8 35 L8 13 C8 10.24 10.24 8 13 8 Z" stroke="#2C2C2A" stroke-width="1.5" fill="none"/>
+        <line x1="24" y1="14" x2="24" y2="34" stroke="#2C2C2A" stroke-width="1.5" stroke-linecap="round" opacity="0.45"/>
+      </svg>
+    </div>
+    <span class="topbar-name">無垢間</span>
+  </a>
+  <div class="topbar-right">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button class="lang-btn" data-lang="ja" aria-pressed="true">日本語</button>
+      <span class="lang-sep" aria-hidden="true">·</span>
+      <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4.5"/>
+        <line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/>
+        <line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/>
+        <line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/>
+        <line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="brand">
+  <h1>自分に聞く</h1>
+  <p class="sub" data-lang-text data-ja="サポート / Support" data-en="Support / サポート">サポート / Support</p>
+</div>
+
+<!-- Japanese -->
+<div class="lang-content" data-lang="ja">
+
+  <h2>お問い合わせ</h2>
+  <p class="contact">ご質問やご要望がございましたら、<a href="mailto:hello@mukuma.com">hello@mukuma.com</a> までお気軽にご連絡ください。</p>
+
+  <h2>無料体験期間について</h2>
+  <p>自分に聞くは、最初に記録を書いた日から7日間、すべての機能を無料でお試しいただけます。7日間が過ぎると、フルアクセス（¥980・買い切り）のご購入が必要になります。</p>
+
+  <h2>購入を復元したい</h2>
+  <p>一度ご購入いただいた方は、設定タブの「購入を復元」から、いつでも無料で復元できます。同じApple IDでサインインしている端末であれば、機種変更後も引き続きご利用いただけます。</p>
+
+  <h2>データの保存場所</h2>
+  <p>すべてのデータは、お使いのiPhone内にのみ保存されます。クラウドへの同期や外部サーバーへの送信は一切ありません。アプリを削除すると、データもすべて削除されますのでご注意ください。</p>
+
+  <h2>通知が来ない</h2>
+  <p>設定アプリの「通知」から、自分に聞くの通知が有効になっているかご確認ください。また、アプリ内の設定タブから通知時刻を設定する必要があります。</p>
+
+  <h2>不具合の報告・ご要望</h2>
+  <p><a href="mailto:hello@mukuma.com">hello@mukuma.com</a> までご連絡ください。お使いの端末（iPhone機種・iOSバージョン）と、発生した状況を教えていただけると助かります。</p>
+
+  <h2>関連リンク</h2>
+  <p><a href="https://mukuma.com/jibun-ni-kiku/privacy/">プライバシーポリシー</a></p>
+
+</div>
+
+<!-- English -->
+<div class="lang-content" data-lang="en">
+
+  <h2>Contact</h2>
+  <p class="contact">For questions or feedback, please email <a href="mailto:hello@mukuma.com">hello@mukuma.com</a>.</p>
+
+  <h2>About the free trial</h2>
+  <p>Jibun ni Kiku offers a 7-day free trial that begins on the day you write your first entry. After 7 days, full access (¥980, one-time purchase) is required to continue using the app.</p>
+
+  <h2>Restoring purchases</h2>
+  <p>If you've previously purchased, you can restore your purchase at any time from the "購入を復元" (Restore Purchases) option in the Settings tab. As long as you're signed in with the same Apple ID, your purchase will be available across devices.</p>
+
+  <h2>Where is my data stored?</h2>
+  <p>All data is stored locally on your iPhone only. There is no cloud sync and no data is sent to external servers. Please note that deleting the app will also delete all your entries.</p>
+
+  <h2>I'm not receiving notifications</h2>
+  <p>Please check that notifications for Jibun ni Kiku are enabled in your iPhone's Settings app under "Notifications." You'll also need to set a notification time in the app's Settings tab.</p>
+
+  <h2>Reporting bugs or sending feedback</h2>
+  <p>Please email <a href="mailto:hello@mukuma.com">hello@mukuma.com</a>. It helps if you can include your device (iPhone model, iOS version) and a description of what happened.</p>
+
+  <h2>Related links</h2>
+  <p><a href="https://mukuma.com/jibun-ni-kiku/privacy/">Privacy Policy</a></p>
+
+</div>
+
+<div class="footer">
+  <p>© 2026 <a href="https://mukuma.com">Mukuma（無垢間）</a></p>
+</div>
+
+<script>
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  localStorage.setItem('mukuma-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+(function(){
+  var saved = localStorage.getItem('mukuma-theme');
+  if(saved){
+    if(saved === 'dark') document.body.classList.add('dark');
+  } else if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+    document.body.classList.add('dark');
+  }
+})();
+
+(function(){
+  var langButtons = document.querySelectorAll('.lang-btn');
+  var langContents = document.querySelectorAll('.lang-content');
+  var langTexts = document.querySelectorAll('[data-lang-text]');
+
+  function setLang(lang){
+    langButtons.forEach(function(b){
+      var isActive = b.dataset.lang === lang;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    langContents.forEach(function(c){
+      c.classList.toggle('active', c.dataset.lang === lang);
+    });
+    langTexts.forEach(function(el){
+      if(el.dataset[lang]) el.textContent = el.dataset[lang];
+    });
+    document.documentElement.setAttribute('lang', lang);
+    try{ localStorage.setItem('mukuma-lang', lang); }catch(e){}
+  }
+
+  var saved = null;
+  try{ saved = localStorage.getItem('mukuma-lang'); }catch(e){}
+  var initial = saved || (navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'ja');
+  setLang(initial);
+
+  langButtons.forEach(function(b){
+    b.addEventListener('click', function(){ setLang(b.dataset.lang); });
+  });
+})();
+</script>
+</body>
+</html>
