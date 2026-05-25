@@ -114,6 +114,21 @@
     border-bottom-color:rgba(44,44,42,0.2);
   }
 
+  .product-link{
+    margin-top:2.5rem;
+    font-size:0.8rem;
+    transition:color 0.3s;
+  }
+  .product-link a{
+    color:#888780;
+    text-decoration:none;
+    letter-spacing:0.06em;
+    transition:color 0.3s;
+  }
+  .product-link a:hover{
+    color:#2C2C2A;
+  }
+
   .theme-toggle{
     position:fixed;
     top:1.25rem;
@@ -166,11 +181,12 @@
   .status-wrap{opacity:0;animation:fadeIn 0.4s ease 2.2s forwards}
   .contact{opacity:0;animation:fadeIn 0.4s ease 2.5s forwards}
   .theme-toggle{opacity:0;animation:fadeIn 0.4s ease 2.7s forwards}
+  .product-link{opacity:0;animation:fadeIn 0.4s ease 2.8s forwards}
 
   @media(prefers-reduced-motion:reduce){
     .mark-frame{stroke-dashoffset:0;animation:none}
     .mark-stroke{stroke-dashoffset:0;animation:none}
-    .logo-text,.divider,.status-wrap,.contact,.theme-toggle{opacity:1;animation:none}
+    .logo-text,.divider,.status-wrap,.contact,.theme-toggle,.product-link{opacity:1;animation:none}
     .pulse-dot{animation:none;opacity:0.5}
   }
 
@@ -188,6 +204,8 @@
   body.dark .contact-label{color:#444441}
   body.dark .contact a{color:#888780;border-bottom-color:rgba(255,255,255,0.06)}
   body.dark .contact a:hover{color:#E5E5E3;border-bottom-color:rgba(255,255,255,0.15)}
+  body.dark .product-link a{color:#5F5E5A}
+  body.dark .product-link a:hover{color:#E5E5E3}
   body.dark .theme-toggle:hover{background:rgba(255,255,255,0.06)}
   body.dark .icon-sun{opacity:0;transform:rotate(90deg)}
   body.dark .icon-moon{opacity:1;transform:rotate(0deg)}
@@ -230,6 +248,9 @@
   <div class="contact">
     <p class="contact-label">ご質問・お問い合わせ</p>
     <p><a href="mailto:hello@mukuma.com">hello@mukuma.com</a></p>
+  </div>
+  <div class="product-link">
+    <p><a href="/jibun-ni-kiku/">自分に聞く →</a></p>
   </div>
 </div>
 <script>
