@@ -45,6 +45,39 @@
     transition:color 0.3s;
   }
 
+  .topbar-right{
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+  .lang-toggle{
+    display:flex;
+    align-items:center;
+    gap:0.125rem;
+  }
+  .lang-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0.3rem 0.5rem;
+    font-family:inherit;
+    font-size:0.75rem;
+    letter-spacing:0.06em;
+    color:#B4B2A9;
+    transition:color 0.2s;
+    border-radius:3px;
+  }
+  .lang-btn:hover{color:#5F5E5A}
+  .lang-btn.active{color:#2C2C2A}
+  .lang-sep{
+    color:#B4B2A9;
+    font-size:0.7rem;
+    user-select:none;
+    transition:color 0.3s;
+  }
+  .lang-content{display:none}
+  .lang-content.active{display:block}
+
   .theme-toggle{
     width:32px;
     height:32px;
@@ -121,24 +154,6 @@
     transition:border-color 0.3s;
   }
 
-  .lang-switch{
-    text-align:center;
-    margin-bottom:2rem;
-  }
-  .lang-switch a{
-    font-size:0.8rem;
-    color:#888780;
-    text-decoration:none;
-    padding:0.4rem 1rem;
-    border:1px solid rgba(44,44,42,0.1);
-    border-radius:4px;
-    transition:background 0.2s,color 0.2s,border-color 0.3s;
-  }
-  .lang-switch a:hover{
-    background:rgba(44,44,42,0.04);
-    color:#2C2C2A;
-  }
-
   .contact{
     font-size:0.85rem;
     color:#5F5E5A;
@@ -164,6 +179,10 @@
   body.dark .topbar-mark svg line{stroke:#E5E5E3}
   body.dark .topbar-name{color:#E5E5E3}
   body.dark .topbar-logo:hover{opacity:0.7}
+  body.dark .lang-btn{color:#5F5E5A}
+  body.dark .lang-btn:hover{color:#888780}
+  body.dark .lang-btn.active{color:#E5E5E3}
+  body.dark .lang-sep{color:#5F5E5A}
   body.dark .theme-toggle:hover{background:rgba(255,255,255,0.06)}
   body.dark .icon-sun{opacity:0;transform:rotate(90deg)}
   body.dark .icon-moon{opacity:1;transform:rotate(0deg)}
@@ -176,8 +195,6 @@
   body.dark a{color:#B4B2A9}
   body.dark a:hover{color:#E5E5E3}
   body.dark .divider{border-top-color:rgba(255,255,255,0.06)}
-  body.dark .lang-switch a{color:#888780;border-color:rgba(255,255,255,0.08)}
-  body.dark .lang-switch a:hover{background:rgba(255,255,255,0.04);color:#D3D1C7}
   body.dark .contact{color:#888780}
   body.dark .footer{border-top-color:rgba(255,255,255,0.06)}
   body.dark .footer p{color:#5F5E5A}
@@ -196,31 +213,35 @@
     </div>
     <span class="topbar-name">無垢間</span>
   </a>
-  <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
-    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-      <circle cx="12" cy="12" r="4.5"/>
-      <line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/>
-      <line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/>
-      <line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/>
-      <line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/>
-    </svg>
-    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-    </svg>
-  </button>
+  <div class="topbar-right">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button class="lang-btn" data-lang="ja" aria-pressed="true">日本語</button>
+      <span class="lang-sep" aria-hidden="true">·</span>
+      <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4.5"/>
+        <line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/>
+        <line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/>
+        <line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/>
+        <line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+      </svg>
+    </button>
+  </div>
 </div>
 
 <div class="brand">
   <h1>自分に聞く</h1>
   <p class="sub">プライバシーポリシー / Privacy Policy</p>
-  <p class="sub">最終更新日: 2026年4月14日</p>
-</div>
-
-<div class="lang-switch">
-  <a href="#english">Read in English ↓</a>
+  <p class="sub" data-lang-text data-ja="最終更新日: 2026年4月14日" data-en="Last updated: April 14, 2026">最終更新日: 2026年4月14日</p>
 </div>
 
 <!-- Japanese -->
+<div class="lang-content" data-lang="ja">
 
 <h2>はじめに</h2>
 <p>「自分に聞く」は、あなたのプライバシーを最優先に設計されたアプリです。このアプリはデータを一切収集しません。あなたの回答は、あなたのデバイスの中だけに保存されます。</p>
@@ -248,9 +269,10 @@
 <h2>お問い合わせ</h2>
 <p class="contact">ご質問やご懸念がございましたら、<a href="mailto:hello@mukuma.com">hello@mukuma.com</a> までご連絡ください。</p>
 
-<hr class="divider" id="english">
+</div>
 
 <!-- English -->
+<div class="lang-content" data-lang="en">
 
 <h2>Introduction</h2>
 <p>Jibun ni Kiku ("Ask yourself") is designed with your privacy as the highest priority. This app collects no data whatsoever. Your answers are stored only on your device.</p>
@@ -278,6 +300,8 @@
 <h2>Contact</h2>
 <p class="contact">If you have questions or concerns, please contact us at <a href="mailto:hello@mukuma.com">hello@mukuma.com</a>.</p>
 
+</div>
+
 <div class="footer">
   <p>© 2026 <a href="https://mukuma.com">Mukuma（無垢間）</a></p>
 </div>
@@ -294,6 +318,37 @@ function toggleTheme(){
   } else if(window.matchMedia('(prefers-color-scheme: dark)').matches){
     document.body.classList.add('dark');
   }
+})();
+
+(function(){
+  var langButtons = document.querySelectorAll('.lang-btn');
+  var langContents = document.querySelectorAll('.lang-content');
+  var langTexts = document.querySelectorAll('[data-lang-text]');
+
+  function setLang(lang){
+    langButtons.forEach(function(b){
+      var isActive = b.dataset.lang === lang;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    langContents.forEach(function(c){
+      c.classList.toggle('active', c.dataset.lang === lang);
+    });
+    langTexts.forEach(function(el){
+      if(el.dataset[lang]) el.textContent = el.dataset[lang];
+    });
+    document.documentElement.setAttribute('lang', lang);
+    try{ localStorage.setItem('mukuma-lang', lang); }catch(e){}
+  }
+
+  var saved = null;
+  try{ saved = localStorage.getItem('mukuma-lang'); }catch(e){}
+  var initial = saved || (navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'ja');
+  setLang(initial);
+
+  langButtons.forEach(function(b){
+    b.addEventListener('click', function(){ setLang(b.dataset.lang); });
+  });
 })();
 </script>
 </body>
