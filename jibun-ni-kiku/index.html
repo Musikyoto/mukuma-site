@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自分に聞く — Mukuma</title>
+<meta name="description" content="自分に聞く（Jibun ni Kiku） — 毎日ひとつの問いに、自分の答えを書き留める振り返りアプリ。">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{font-size:16px;-webkit-text-size-adjust:100%}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",system-ui,-apple-system,sans-serif;
+    background:#FAF8F5;
+    color:#2C2C2A;
+    line-height:1.85;
+    padding:0 1.5rem 5rem;
+    max-width:640px;
+    margin:0 auto;
+    transition:background 0.3s,color 0.3s;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:1.25rem 0;
+    margin-bottom:1.5rem;
+  }
+  .topbar-logo{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    color:inherit;
+  }
+  .topbar-logo:hover{opacity:0.7}
+  .topbar-mark{width:28px;height:28px;flex-shrink:0}
+  .topbar-mark svg path,.topbar-mark svg line{transition:stroke 0.3s}
+  .topbar-name{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:0.85rem;
+    font-weight:400;
+    letter-spacing:0.06em;
+    transition:color 0.3s;
+  }
+
+  .topbar-right{
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+  }
+
+  .lang-toggle{
+    display:flex;
+    align-items:center;
+    gap:0.125rem;
+  }
+  .lang-btn{
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0.3rem 0.5rem;
+    font-family:inherit;
+    font-size:0.75rem;
+    letter-spacing:0.06em;
+    color:#B4B2A9;
+    transition:color 0.2s;
+    border-radius:3px;
+  }
+  .lang-btn:hover{color:#5F5E5A}
+  .lang-btn.active{color:#2C2C2A}
+  .lang-sep{
+    color:#B4B2A9;
+    font-size:0.7rem;
+    user-select:none;
+    transition:color 0.3s;
+  }
+
+  .theme-toggle{
+    width:32px;
+    height:32px;
+    border:none;
+    background:none;
+    cursor:pointer;
+    padding:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    transition:background 0.2s;
+  }
+  .theme-toggle:hover{background:rgba(44,44,42,0.05)}
+  .theme-toggle svg{width:16px;height:16px;position:absolute;transition:opacity 0.4s ease,transform 0.4s ease}
+  .icon-sun{color:#888780;opacity:1;transform:rotate(0deg)}
+  .icon-moon{color:#888780;opacity:0;transform:rotate(-90deg)}
+
+  .brand{
+    text-align:center;
+    margin-top:2rem;
+    margin-bottom:3rem;
+  }
+  .brand h1{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:2rem;
+    font-weight:400;
+    letter-spacing:0.1em;
+    margin-bottom:0.75rem;
+    transition:color 0.3s;
+  }
+  .brand .tagline{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:0.95rem;
+    color:#5F5E5A;
+    letter-spacing:0.04em;
+    transition:color 0.3s;
+  }
+
+  .availability{
+    text-align:center;
+    margin-bottom:4rem;
+    padding:1.25rem 1.5rem;
+    background:rgba(44,44,42,0.025);
+    border-radius:6px;
+    transition:background 0.3s;
+  }
+  .availability-label{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:0.95rem;
+    color:#2C2C2A;
+    letter-spacing:0.04em;
+    margin-bottom:0.25rem;
+    transition:color 0.3s;
+  }
+  .availability-meta{
+    font-size:0.75rem;
+    color:#888780;
+    letter-spacing:0.06em;
+    transition:color 0.3s;
+  }
+
+  .description p{
+    font-size:0.95rem;
+    margin-bottom:1.25rem;
+    color:#444441;
+    transition:color 0.3s;
+  }
+  .description p:last-child{margin-bottom:0}
+
+  .stats{
+    text-align:center;
+    margin-top:3rem;
+    padding-top:2rem;
+    border-top:1px solid rgba(44,44,42,0.08);
+    transition:border-color 0.3s;
+  }
+  .stats-text{
+    font-family:"Hiragino Mincho ProN","Yu Mincho","MS PMincho",serif;
+    font-size:0.85rem;
+    color:#5F5E5A;
+    letter-spacing:0.1em;
+    transition:color 0.3s;
+  }
+
+  a{color:#5F5E5A;text-decoration:underline;text-underline-offset:2px;transition:color 0.3s}
+  a:hover{color:#2C2C2A}
+
+  .lang-content{display:none}
+  .lang-content.active{display:block}
+
+  .footer{
+    margin-top:5rem;
+    padding-top:2rem;
+    border-top:1px solid rgba(44,44,42,0.08);
+    text-align:center;
+    transition:border-color 0.3s;
+  }
+  .footer-links{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:1rem;
+    margin-bottom:0.75rem;
+    font-size:0.8rem;
+  }
+  .footer-links a{
+    color:#5F5E5A;
+    text-decoration:none;
+    letter-spacing:0.04em;
+    transition:color 0.3s;
+  }
+  .footer-links a:hover{color:#2C2C2A;text-decoration:underline}
+  .footer-links .sep{color:#B4B2A9;font-size:0.7rem;user-select:none;transition:color 0.3s}
+  .footer p{
+    font-size:0.75rem;
+    color:#B4B2A9;
+  }
+  .footer p a{color:#B4B2A9;transition:color 0.3s}
+
+  /* Dark mode */
+  body.dark{background:#1C1C1E;color:#E5E5E3}
+  body.dark .topbar-mark svg path{stroke:#E5E5E3}
+  body.dark .topbar-mark svg line{stroke:#E5E5E3}
+  body.dark .topbar-name{color:#E5E5E3}
+  body.dark .topbar-logo:hover{opacity:0.7}
+  body.dark .lang-btn{color:#5F5E5A}
+  body.dark .lang-btn:hover{color:#888780}
+  body.dark .lang-btn.active{color:#E5E5E3}
+  body.dark .lang-sep{color:#5F5E5A}
+  body.dark .theme-toggle:hover{background:rgba(255,255,255,0.06)}
+  body.dark .icon-sun{opacity:0;transform:rotate(90deg)}
+  body.dark .icon-moon{opacity:1;transform:rotate(0deg)}
+  body.dark .brand h1{color:#E5E5E3}
+  body.dark .brand .tagline{color:#B4B2A9}
+  body.dark .availability{background:rgba(255,255,255,0.03)}
+  body.dark .availability-label{color:#E5E5E3}
+  body.dark .availability-meta{color:#888780}
+  body.dark .description p{color:#B4B2A9}
+  body.dark .stats{border-top-color:rgba(255,255,255,0.06)}
+  body.dark .stats-text{color:#888780}
+  body.dark a{color:#B4B2A9}
+  body.dark a:hover{color:#E5E5E3}
+  body.dark .footer{border-top-color:rgba(255,255,255,0.06)}
+  body.dark .footer-links a{color:#888780}
+  body.dark .footer-links a:hover{color:#E5E5E3}
+  body.dark .footer-links .sep{color:#5F5E5A}
+  body.dark .footer p{color:#5F5E5A}
+  body.dark .footer p a{color:#5F5E5A}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="https://mukuma.com" class="topbar-logo">
+    <div class="topbar-mark">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13 8 L35 8 C37.76 8 40 10.24 40 13 L40 35 C40 37.76 37.76 40 35 40 L13 40 C10.24 40 8 37.76 8 35 L8 13 C8 10.24 10.24 8 13 8 Z" stroke="#2C2C2A" stroke-width="1.5" fill="none"/>
+        <line x1="24" y1="14" x2="24" y2="34" stroke="#2C2C2A" stroke-width="1.5" stroke-linecap="round" opacity="0.45"/>
+      </svg>
+    </div>
+    <span class="topbar-name">無垢間</span>
+  </a>
+  <div class="topbar-right">
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button class="lang-btn" data-lang="ja" aria-pressed="true">日本語</button>
+      <span class="lang-sep" aria-hidden="true">·</span>
+      <button class="lang-btn" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4.5"/>
+        <line x1="12" y1="1.5" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22.5"/>
+        <line x1="4.2" y1="4.2" x2="6" y2="6"/><line x1="18" y1="18" x2="19.8" y2="19.8"/>
+        <line x1="1.5" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22.5" y2="12"/>
+        <line x1="4.2" y1="19.8" x2="6" y2="18"/><line x1="18" y1="6" x2="19.8" y2="4.2"/>
+      </svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<div class="brand">
+  <h1>自分に聞く</h1>
+  <p class="tagline" data-lang-text data-ja="毎日ひとつの問いに、自分の答えを" data-en="One question a day. Your own answer.">毎日ひとつの問いに、自分の答えを</p>
+</div>
+
+<div class="availability">
+  <p class="availability-label" data-lang-text data-ja="App Storeにて近日公開" data-en="Coming soon to the App Store">App Storeにて近日公開</p>
+  <p class="availability-meta" data-lang-text data-ja="iPhone · iOS 16以降" data-en="iPhone · iOS 16 and later">iPhone · iOS 16以降</p>
+</div>
+
+<!-- Japanese -->
+<div class="lang-content" data-lang="ja">
+  <div class="description">
+    <p>自分に聞くは、毎日ひとつの問いに、自分の答えを書き留めていく振り返りのアプリです。10のテーマから180の問いを用意しており、毎日新しい問いが届きます。</p>
+    <p>すべてのデータは、お使いのiPhone内にのみ保存されます。クラウドへの同期も、外部サーバーへの送信もありません。広告も、トラッキングもありません。</p>
+    <p>最初の7日間は無料でお試しいただけます。その後は買い切り（¥980）でフルアクセスをご購入いただけます。</p>
+  </div>
+  <div class="stats">
+    <p class="stats-text">10のテーマ・180の問い</p>
+  </div>
+</div>
+
+<!-- English -->
+<div class="lang-content" data-lang="en">
+  <div class="description">
+    <p>Jibun ni Kiku is a reflection app where you write your own answer to one question each day. With 180 questions across 10 themes, a new question arrives every morning.</p>
+    <p>All data is stored locally on your iPhone only. No cloud sync, no external servers. No ads, no tracking.</p>
+    <p>The first 7 days are free. After that, full access is available as a one-time purchase (¥980).</p>
+  </div>
+  <div class="stats">
+    <p class="stats-text">10 themes · 180 questions</p>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="/jibun-ni-kiku/support/" data-lang-text data-ja="サポート" data-en="Support">サポート</a>
+    <span class="sep" aria-hidden="true">·</span>
+    <a href="/jibun-ni-kiku/privacy/" data-lang-text data-ja="プライバシーポリシー" data-en="Privacy">プライバシーポリシー</a>
+  </div>
+  <p>© 2026 <a href="https://mukuma.com">Mukuma（無垢間）</a></p>
+</div>
+
+<script>
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  localStorage.setItem('mukuma-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+}
+(function(){
+  var saved = localStorage.getItem('mukuma-theme');
+  if(saved){
+    if(saved === 'dark') document.body.classList.add('dark');
+  } else if(window.matchMedia('(prefers-color-scheme: dark)').matches){
+    document.body.classList.add('dark');
+  }
+})();
+
+(function(){
+  var langButtons = document.querySelectorAll('.lang-btn');
+  var langContents = document.querySelectorAll('.lang-content');
+  var langTexts = document.querySelectorAll('[data-lang-text]');
+
+  function setLang(lang){
+    langButtons.forEach(function(b){
+      var isActive = b.dataset.lang === lang;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    });
+    langContents.forEach(function(c){
+      c.classList.toggle('active', c.dataset.lang === lang);
+    });
+    langTexts.forEach(function(el){
+      if(el.dataset[lang]) el.textContent = el.dataset[lang];
+    });
+    document.documentElement.setAttribute('lang', lang);
+    try{ localStorage.setItem('mukuma-lang', lang); }catch(e){}
+  }
+
+  var saved = null;
+  try{ saved = localStorage.getItem('mukuma-lang'); }catch(e){}
+  var initial = saved || (navigator.language && navigator.language.toLowerCase().startsWith('en') ? 'en' : 'ja');
+  setLang(initial);
+
+  langButtons.forEach(function(b){
+    b.addEventListener('click', function(){ setLang(b.dataset.lang); });
+  });
+})();
+</script>
+</body>
+</html>
