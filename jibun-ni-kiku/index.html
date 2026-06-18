@@ -132,6 +132,17 @@
     margin-bottom:0.25rem;
     transition:color 0.3s;
   }
+  .app-store-badge-link{
+    display:inline-block;
+    margin-bottom:0.5rem;
+    transition:opacity 0.3s;
+  }
+  .app-store-badge-link:hover{ opacity:0.7; }
+  .app-store-badge{
+    height:40px;
+    width:auto;
+    display:block;
+  }
   .availability-meta{
     font-size:0.75rem;
     color:#888780;
@@ -267,7 +278,9 @@
 </div>
 
 <div class="availability">
-  <p class="availability-label" data-lang-text data-ja="App Storeにて近日公開" data-en="Coming soon to the App Store">App Storeにて近日公開</p>
+  <a href="https://apps.apple.com/app/id6769645780" class="app-store-badge-link" aria-label="自分に聞く - App Store">
+    <img class="app-store-badge" data-lang-img data-ja="/assets/app-store-badge-ja.svg" data-en="/assets/app-store-badge-en.svg" src="/assets/app-store-badge-ja.svg" alt="App Storeで入手">
+  </a>
   <p class="availability-meta" data-lang-text data-ja="iPhone · iOS 16以降" data-en="iPhone · iOS 16 and later">iPhone · iOS 16以降</p>
 </div>
 
@@ -322,6 +335,7 @@ function toggleTheme(){
   var langButtons = document.querySelectorAll('.lang-btn');
   var langContents = document.querySelectorAll('.lang-content');
   var langTexts = document.querySelectorAll('[data-lang-text]');
+  var langImgs = document.querySelectorAll('[data-lang-img]');
 
   function setLang(lang){
     langButtons.forEach(function(b){
@@ -334,6 +348,9 @@ function toggleTheme(){
     });
     langTexts.forEach(function(el){
       if(el.dataset[lang]) el.textContent = el.dataset[lang];
+    });
+    langImgs.forEach(function(el){
+      if(el.dataset[lang]) el.src = el.dataset[lang];
     });
     document.documentElement.setAttribute('lang', lang);
     try{ localStorage.setItem('mukuma-lang', lang); }catch(e){}
